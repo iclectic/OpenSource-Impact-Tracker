@@ -15,12 +15,16 @@ export type RepositoryContribution = {
   fullName: string;
   description: string | null;
   htmlUrl: string;
+  homepageUrl?: string | null;
   language: string | null;
   stars: number;
   forks: number;
+  watchers?: number;
   openIssues: number;
   updatedAt: string;
+  pushedAt?: string | null;
   isFork: boolean;
+  isPrivate?: boolean;
 };
 
 export type IssueContribution = {
