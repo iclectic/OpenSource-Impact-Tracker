@@ -171,9 +171,8 @@ Deferred:
 
 - `npm run lint` passes.
 - `npm test` passes.
-- `npm run build` passes.
-- `npm run prisma:generate` passes with a valid `DATABASE_URL`.
-- Landing page explains the evidence-first impact profile product.
-- Dashboard placeholder shows profile, GitHub sync, impact, and activity empty states.
-- Public profile placeholder shows required profile sections and empty states.
-- README instructions match the current MVP direction.
+- `npm run build` completes with no required environment variables.
+- The home page is centered on GitHub profile contribution lookup.
+- The app accepts a GitHub profile URL and calls the local contribution API.
+- Successful lookup results show repositories, pull requests, issues, and totals.
+- Failed lookup results show an accessible error.
