@@ -1,16 +1,15 @@
 # OpenSource Impact Tracker
 
-A focused GitHub contribution lookup app for open-source activity.
+OpenSource Impact Tracker is being developed into an evidence-first developer
+impact profile platform.
 
-Enter a GitHub profile URL or username and the app pulls public open-source contribution signals for that user:
+Developers will be able to connect GitHub, import public GitHub work, add
+non-GitHub impact items such as articles, talks, meetups, mentoring,
+documentation, tutorials, podcasts, research, and community work, then publish a
+clean public profile backed by evidence links.
 
-- public repositories
-- source repositories vs forks
-- authored pull requests
-- authored issues
-- repository stars, forks, languages, and links
-
-The app uses public GitHub REST API endpoints only. It does not require paid APIs, secrets, authentication, a database, or a GitHub token.
+The product is not a vanity score generator or a generic GitHub statistics
+dashboard. It should answer: "What impact has this developer made?"
 
 ## Stack
 
@@ -20,6 +19,27 @@ The app uses public GitHub REST API endpoints only. It does not require paid API
 - Tailwind CSS 4
 - Vitest, React Testing Library, and jsdom
 - ESLint with the Next.js config
+
+## Current MVP Status
+
+Implemented:
+
+- public landing page foundation
+- placeholder dashboard route
+- placeholder public profile route
+- reusable UI cards, badges, and empty states
+- GitHub OAuth route scaffolding
+- first-login user/profile bootstrap helpers
+- authenticated GitHub repository sync foundation
+- public GitHub lookup prototype retained in `src/components/impact/`
+
+Planned next:
+
+- PostgreSQL and Prisma persistence
+- developer profile editing
+- manual impact items
+- evidence links and verification labels
+- polished public profile rendering
 
 ## Getting Started
 
@@ -37,29 +57,74 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## How It Works
+Useful local routes:
 
-The home page has one primary workflow:
+- `/` - product landing page
+- `/dashboard` - placeholder authenticated dashboard surface
+- `/demo-profile` - placeholder public developer impact profile
 
-1. Paste a GitHub profile URL, such as `https://github.com/octocat`, or enter a username.
-2. Click **Search**.
-3. Review public repositories, authored pull requests, authored issues, and summary totals.
+## Database Setup
 
-The lookup route lives at `src/app/api/contributions/route.ts`.
+The persistence foundation uses Prisma with PostgreSQL. Copy the example
+environment file and fill in local values:
 
-GitHub-specific parsing and API normalization live in `src/lib/github/`.
+```bash
+cp .env.example .env
+```
 
-## Public Data Limits
+Generate the Prisma client after dependency installation or schema changes:
 
-Because the MVP intentionally avoids secrets and authentication:
+```bash
+npm run prisma:generate
+```
 
-- private contributions are not included
-- organization-private work is not included
-- GitHub search rate limits apply
-- search results are capped by GitHub
-- the app displays the first page of recent public pull requests and issues
+When a local PostgreSQL database is available, run migrations and seed demo
+data:
 
-These limits are shown in the UI after a successful lookup.
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+## Existing GitHub Prototype
+
+The repository still contains the original public GitHub lookup prototype:
+
+- `src/components/impact/ImpactDashboard.tsx`
+- `src/app/api/contributions/route.ts`
+- `src/lib/github/`
+
+This code is useful as a starting point for the authenticated GitHub repository
+sync flow, but it no longer defines the full product scope.
+
+## Product Principles
+
+- Evidence first: major claims should support a URL, source, or proof item.
+- Honest verification: distinguish GitHub verified, evidence provided,
+  self-reported, pending, and rejected evidence.
+- No fake developer score as the core feature.
+- Public profiles should be clean, technical, credible, responsive, and
+  shareable.
+
+## Planned Environment Variables
+
+The current foundation phase does not require local secrets. Later auth and
+database phases are expected to add:
+
+```bash
+DATABASE_URL=
+AUTH_SECRET=
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+```
+
+Do not commit real `.env` files or OAuth secrets.
+
+For local GitHub OAuth, create a GitHub OAuth app with this callback URL:
+
+```text
+http://localhost:3000/api/auth/callback/github
+```
 
 ## Available Scripts
 
@@ -68,32 +133,39 @@ npm run dev
 npm run lint
 npm test
 npm run build
+npm run prisma:generate
+npm run db:migrate
+npm run db:seed
 ```
 
-`npm test` covers username parsing and the GitHub profile search UI.
+`npm test` covers username parsing, the GitHub profile search UI, dashboard
+empty states, public profile placeholders, and domain validation.
 
 ## MVP Scope
 
 Included:
 
-- GitHub profile URL or username input
-- Public GitHub user lookup
-- Public repository lookup
-- Public authored pull request lookup
-- Public authored issue lookup
-- Contribution summary cards
-- Public-data limitation notes
-- Responsive UI
+- public landing page
+- GitHub login or connection
+- developer profile creation and editing
+- public developer profile page
+- GitHub repository import
+- manual impact item creation
+- evidence links for impact items
+- featured impact items
+- dashboard home and management pages
+- impact timeline
+- responsive UI
+- clear empty, loading, and error states
+- README and verification updates
 
 Deferred:
 
-- GitHub OAuth or personal access tokens
-- private contribution history
-- complete pagination across every result
-- commit-by-commit contribution graph reconstruction
-- database persistence
-- saved searches
-- paid APIs or AI enrichment
+- public developer directory and search
+- follows, reactions, comments, endorsements, and notifications
+- private repository import
+- background sync jobs and webhooks
+- paid APIs or AI-generated impact claims
 
 ## Final Verification Checklist
 

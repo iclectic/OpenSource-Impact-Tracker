@@ -27,12 +27,16 @@ type GitHubRepoResponse = {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage: string | null;
   language: string | null;
   stargazers_count: number;
   forks_count: number;
+  watchers_count: number;
   open_issues_count: number;
   updated_at: string;
+  pushed_at: string | null;
   fork: boolean;
+  private: boolean;
 };
 
 type GitHubSearchIssueResponse = {
@@ -147,12 +151,16 @@ async function fetchGitHubRepositories(
     fullName: repo.full_name,
     description: repo.description,
     htmlUrl: repo.html_url,
+    homepageUrl: repo.homepage,
     language: repo.language,
     stars: repo.stargazers_count,
     forks: repo.forks_count,
+    watchers: repo.watchers_count,
     openIssues: repo.open_issues_count,
     updatedAt: repo.updated_at,
+    pushedAt: repo.pushed_at,
     isFork: repo.fork,
+    isPrivate: repo.private,
   }));
 }
 

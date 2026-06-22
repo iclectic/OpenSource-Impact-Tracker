@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "OpenSource Impact Tracker",
   description:
-    "Search public GitHub profiles for open-source repositories, pull requests, and issues.",
+    "Create an evidence-backed developer impact profile with GitHub repositories, articles, talks, projects, and proof links.",
 };
 
 export default function RootLayout({

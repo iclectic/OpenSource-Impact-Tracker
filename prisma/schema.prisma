@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AccountProvider {
+  github
+}
+
+enum GitHubContributionType {
+  pull_request
+  issue
+  commit
+  release
+  discussion
+}
+
+enum ImpactCategory {
+  project
+  article
+  talk
+  workshop
+  meetup
+  podcast
+  mentoring
+  open_source
+  documentation
+  research
+  tutorial
+  video
+  community
+  hackathon
+  award
+}
+
+enum ImpactItemStatus {
+  draft
+  published
+  archived
+}
+
+enum ImpactVisibility {
+  public
+  private
+  unlisted
+}
+
+enum EvidenceType {
+  github
+  pull_request
+  issue
+  article
+  video
+  slides
+  event_page
+  podcast
+  screenshot
+  website
+  social_post
+  certificate
+  document
+  research_paper
+}
+
+enum VerificationStatus {
+  verified
+  evidence_provided
+  self_reported
+  pending
+  rejected
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  email               String?              @unique
+  name                String?
+  username            String?              @unique
+  avatarUrl           String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  lastLoginAt         DateTime?
+  connectedAccounts   ConnectedAccount[]
+  developerProfile    DeveloperProfile?
+  githubRepositories  GitHubRepository[]
+  githubContributions GitHubContribution[]
+  impactItems         ImpactItem[]
+
+  @@index([createdAt])
+}
+
+model DeveloperProfile {
+  id                   String       @id @default(cuid())
+  userId               String       @unique
+  handle               String       @unique
+  displayName          String
+  headline             String?
+  bio                  String?
+  location             String?
+  websiteUrl           String?
+  githubUsername       String?
+  avatarUrl            String?
+  bannerUrl            String?
+  primarySkills        String[]
+  publicProfileEnabled Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impactItems          ImpactItem[]
+
+  @@index([publicProfileEnabled])
+}
+
+model ConnectedAccount {
+  id                    String          @id @default(cuid())
+  userId                String
+  provider              AccountProvider
+  providerUserId        String
+  accessTokenEncrypted  String?
+  refreshTokenEncrypted String?
+  scope                 String?
+  connectedAt           DateTime        @default(now())
+  lastSyncedAt          DateTime?
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+}
+
+model GitHubRepository {
+  id             String   @id @default(cuid())
+  userId         String
+  githubRepoId   BigInt
+  name           String
+  fullName       String
+  description    String?
+  url            String
+  homepageUrl    String?
+  language       String?
+  stars          Int      @default(0)
+  forks          Int      @default(0)
+  watchers       Int      @default(0)
+  openIssues     Int      @default(0)
+  isFork         Boolean  @default(false)
+  isPrivate      Boolean  @default(false)
+  pushedAt       DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lastSyncedAt   DateTime?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, githubRepoId])
+  @@index([userId, pushedAt])
+}
+
+model GitHubContribution {
+  id             String                 @id @default(cuid())
+  userId         String
+  type           GitHubContributionType
+  sourceId       String
+  repositoryName String
+  repositoryUrl  String
+  title          String
+  url            String
+  occurredAt     DateTime
+  metadataJson   Json?
+  createdAt      DateTime               @default(now())
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, sourceId])
+  @@index([userId, occurredAt])
+}
+
+model ImpactItem {
+  id           String             @id @default(cuid())
+  userId       String
+  profileId    String
+  title        String
+  slug         String
+  description  String?
+  category     ImpactCategory
+  status       ImpactItemStatus   @default(draft)
+  visibility   ImpactVisibility   @default(private)
+  impactDate   DateTime?
+  startDate    DateTime?
+  endDate      DateTime?
+  url          String?
+  imageUrl     String?
+  featured     Boolean            @default(false)
+  tags         String[]
+  metadataJson Json?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile      DeveloperProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  evidenceLinks EvidenceLink[]
+
+  @@unique([profileId, slug])
+  @@index([userId, status, visibility])
+  @@index([profileId, featured])
+}
+
+model EvidenceLink {
+  id                 String             @id @default(cuid())
+  impactItemId       String
+  url                String
+  title              String
+  description        String?
+  evidenceType       EvidenceType
+  verificationStatus VerificationStatus @default(evidence_provided)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  impactItem         ImpactItem         @relation(fields: [impactItemId], references: [id], onDelete: Cascade)
+
+  @@index([impactItemId])
+  @@index([verificationStatus])
+}
