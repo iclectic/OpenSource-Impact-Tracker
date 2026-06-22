@@ -104,4 +104,3 @@ Deferred:
 - The app accepts a GitHub profile URL and calls the local contribution API.
 - Successful lookup results show repositories, pull requests, issues, and totals.
 - Failed lookup results show an accessible error.
-- README instructions match the current GitHub-only scope.
