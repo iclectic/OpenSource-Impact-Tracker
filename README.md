@@ -1,37 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OpenSource Impact Tracker
+
+A focused GitHub contribution lookup app for open-source activity.
+
+Enter a GitHub profile URL or username and the app pulls public open-source contribution signals for that user:
+
+- public repositories
+- source repositories vs forks
+- authored pull requests
+- authored issues
+- repository stars, forks, languages, and links
+
+The app uses public GitHub REST API endpoints only. It does not require paid APIs, secrets, authentication, a database, or a GitHub token.
+
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Vitest, React Testing Library, and jsdom
+- ESLint with the Next.js config
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The home page has one primary workflow:
 
-## Learn More
+1. Paste a GitHub profile URL, such as `https://github.com/octocat`, or enter a username.
+2. Click **Search**.
+3. Review public repositories, authored pull requests, authored issues, and summary totals.
 
-To learn more about Next.js, take a look at the following resources:
+The lookup route lives at `src/app/api/contributions/route.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+GitHub-specific parsing and API normalization live in `src/lib/github/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Public Data Limits
 
-## Deploy on Vercel
+Because the MVP intentionally avoids secrets and authentication:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- private contributions are not included
+- organization-private work is not included
+- GitHub search rate limits apply
+- search results are capped by GitHub
+- the app displays the first page of recent public pull requests and issues
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# OpenSource-Impact-Tracker
+These limits are shown in the UI after a successful lookup.
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run lint
+npm test
+npm run build
+```
+
+`npm test` covers username parsing and the GitHub profile search UI.
+
+## MVP Scope
+
+Included:
+
+- GitHub profile URL or username input
+- Public GitHub user lookup
+- Public repository lookup
+- Public authored pull request lookup
+- Public authored issue lookup
+- Contribution summary cards
+- Public-data limitation notes
+- Responsive UI
+
+Deferred:
+
+- GitHub OAuth or personal access tokens
+- private contribution history
+- complete pagination across every result
+- commit-by-commit contribution graph reconstruction
+- database persistence
+- saved searches
+- paid APIs or AI enrichment
+
+## Final Verification Checklist
+
+- `npm run lint` passes.
+- `npm test` passes.
+- `npm run build` completes with no required environment variables.
+- The home page is centered on GitHub profile contribution lookup.
+- The app accepts a GitHub profile URL and calls the local contribution API.
+- Successful lookup results show repositories, pull requests, issues, and totals.
+- Failed lookup results show an accessible error.
+- README instructions match the current GitHub-only scope.
